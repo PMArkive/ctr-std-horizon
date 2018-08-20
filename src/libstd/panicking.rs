@@ -223,8 +223,9 @@ fn default_hook(info: &PanicInfo) {
     }
 
     let write = |err: &mut dyn (::io::Write)| {
-        let _ = writeln!(err, "thread '{}' panicked at '{}', {}",
-                         name, msg, location);
+        // 3DS-specific change: svcOutputDebugString appends a newline
+        // after each invocation, so output the whole debug message at once
+        let _ = write!(err, "{}", error_text);
 
         #[cfg(feature = "backtrace")]
         {
